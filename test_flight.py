@@ -25,6 +25,7 @@ class TestFlight:
     totalPassenger=''
     totalOrdering = ''
     price = ''
+    anakPassenger=''
 
     @classmethod
     def setup_class(self):
@@ -36,8 +37,8 @@ class TestFlight:
         self.driver.maximize_window()
 
     def randomize_passenger(self):
-        self.dewasa = random.randint(1,8)-1
-        # self.anak = random.randint(1,8)-1
+        self.dewasa = random.randint(1,5)-1
+        self.anak = random.randint(1,5)-1
 
     def randomize_cabin_class(self):
         # self.cabin = random.randint(1,4) - 1
@@ -58,14 +59,12 @@ class TestFlight:
         elif(day_range<30):
             self.date_depature = random.randint(current_date,day_range)
 
-    def randomize_depature_time_and_transit(self):
-        pass
     
     def check_passenger(self,passenger,passengerBox):
         total_passenger = 0
         for i in passenger:
             total_passenger += int(i.find_element_by_tag_name("span").get_attribute("innerHTML"))
-        self.babyPassenger = int(passenger[2].find_element_by_tag_name("span").get_attribute("innerHTML"))
+        self.anakPassenger = int(passenger[1].find_element_by_tag_name("span").get_attribute("innerHTML"))
         self.totalPassenger = total_passenger
         passengerBoxValue = passengerBox.get_attribute("value").split(" ")
         assert total_passenger == int(passengerBoxValue[0]), "total passengers seleceted not equal to the summary box"
@@ -100,37 +99,51 @@ class TestFlight:
         if(self.check_exists_by_className("tix-core-country-dropdown")):
             nationality_dropdown_exist = True
             nationality_dropdown =passenger_box[0].find_element_by_class_name("tix-core-country-dropdown")
-            select_nationality = nationality_dropdown.find_element_by_tag_name("input")
             nationality_dropdown.click()
-            select_nationality.click()
+            select_nationality = nationality_dropdown.find_element_by_xpath("//input[@placeholder='Cari negara Anda']")
             select_nationality.send_keys("indonesia")
-            select_nationality.send_keys(Keys.ENTER)
-            time.sleep(3)
+            click_on_nationality = nationality_dropdown.find_element_by_xpath("//li[@class='list-data']")
+            click_on_nationality.click()
+            
 
         for i in range(self.totalPassenger-1) : 
             row = passenger_box[i+1].find_element_by_class_name("row")
-            print(" row : {}".format(row))
             title_dropdown = passenger_box[i+1].find_element_by_class_name("input-flight-dropdown")
             ActionChains(driver).move_to_element(title_dropdown).click(title_dropdown).perform()
             title_dropdown.click()
-            print("{}".format(title_dropdown))
                
             title_dropdown_value = row.find_elements_by_class_name("list-data")
-            print(title_dropdown_value)
+
             try:
                 x = random.randint(0,2)
                 title_dropdown_value[x].click()
             except:
                 title_dropdown_value[0].click()
-            random_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(2))
+            random_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
             passenger_box[i+1].find_element_by_class_name("input-list-autocomplete").send_keys("testing {}".format(random_name))
             if(nationality_dropdown_exist):
                 nationality_dropdown =passenger_box[i+1].find_element_by_class_name("tix-core-country-dropdown")
-                select_nationality = nationality_dropdown.find_element_by_tag_name("input")
                 nationality_dropdown.click()
-                select_nationality.click()
+                select_nationality = nationality_dropdown.find_element_by_xpath("//input[@placeholder='Cari negara Anda']")
                 select_nationality.send_keys("indonesia")
-                select_nationality.send_keys(Keys.ENTER)
+                click_on_nationality = nationality_dropdown.find_element_by_xpath("//li[@class='list-data']")
+                ActionChains(driver).move_to_element(click_on_nationality).click(click_on_nationality).perform()
+                
+            if(self.anakPassenger!='' and (i+1) >= (self.totalPassenger-self.anakPassenger)):
+                random_date =random.randint(1,28) -1
+                random_month_child = random.randint(1,6) -1 
+                date_split_box = passenger_box[i+1].find_element_by_class_name("wrapper-date-split")
+                ActionChains(driver).move_to_element(date_split_box).click(date_split_box).perform()
+                dd = date_split_box.find_element_by_class_name("date")
+                mm = date_split_box.find_element_by_class_name("month")
+                yy = date_split_box.find_element_by_class_name("year")
+                select_date = dd.find_elements_by_class_name("list-data")
+                select_date[random_date-1].click()
+                select_month = mm.find_elements_by_class_name("list-data")
+                select_month[random_month_child-1].click()
+                select_year = yy.find_elements_by_class_name("list-data")
+                select_year[0].click()
+
         #LANJUTKAN KE PEMBAYARAN
         button_pay = driver.find_element_by_class_name("v3-btn__yellow")
         ActionChains(driver).move_to_element(button_pay).click(button_pay).perform()
@@ -155,14 +168,12 @@ class TestFlight:
         self.randomize_date_depature()
         flag = 1 
         date_picker_box = driver.find_element_by_class_name("widget-datepicker-content")
-        print(date_picker_box)
         while(flag):
             parent_visible_date = driver.find_elements_by_class_name("CalendarMonth_caption")[:2]
             for i in parent_visible_date : 
                 try : 
                     date_value = i.find_element_by_tag_name("strong").get_attribute('innerHTML')
                     month = date_value.split(' ')[0]
-                    print(self.month_depature)
                     if(month == self.month_depature) :
                         flag = 0
                         calendar_table = driver.find_element_by_class_name("CalendarMonth_table")
@@ -188,8 +199,8 @@ class TestFlight:
         passenger_selection = passenger_box.find_elements_by_tag_name("li")
         for i in range(self.dewasa) : 
             passenger_selection[0].find_element_by_class_name("icon-plus").click()
-        # for i in range(self.anak) :
-        #     passenger_selection[1].find_element_by_class_name("icon-plus").click()
+        for i in range(self.anak) :
+            passenger_selection[1].find_element_by_class_name("icon-plus").click()
 
         cabin = driver.find_element_by_class_name("col-cabin")
         cabin_class = cabin.find_elements_by_tag_name("li")
@@ -207,10 +218,11 @@ class TestFlight:
             button = driver.find_elements_by_class_name("ab-message-button")[1]
             button.click()
 
-        if(self.check_exists_by_className("btn-book-now")):
-            maskapai_penerbangan = driver.find_elements_by_class_name("btn-book-now") 
-            pick_random_flight = random.randint(1,len(maskapai_penerbangan)-1)
-            maskapai_penerbangan[pick_random_flight].click()
+        if(not self.check_exists_by_className("btn-book-now")):
+            pytest.xfail("no flight for for this particular search")
+        maskapai_penerbangan = driver.find_elements_by_class_name("btn-book-now") 
+        pick_random_flight = random.randint(1,len(maskapai_penerbangan)-1)
+        maskapai_penerbangan[pick_random_flight].click()
 
         self.set_user_checkout_data()
         driver.find_element_by_class_name("v3-btn__blue").click()
