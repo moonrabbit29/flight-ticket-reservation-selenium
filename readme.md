@@ -22,4 +22,7 @@ The script will run and select random variables which consist of Number of passe
    This scripts run automation on chromium web browser, step to run this scripts
    1. Open this cloned repostiory directory on your computer and run => java -jar selenium-server-standalone-3.141.59.jar
    2. Open another terminal to run the script, you can run => pytest -s means you only run one test or simply use => pytest --count=NUMBER OF TEST YOU WANT TO RUN to run multiple test (occur in turn)
+https://youtu.be/32gIhFX_-Hw
+### sample video 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/32gIhFX_-Hw/0.jpg)](https://www.youtube.com/watch?v=32gIhFX_-Hw)
 
