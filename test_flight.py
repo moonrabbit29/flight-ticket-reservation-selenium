@@ -229,6 +229,6 @@ class TestFlight:
         driver.find_element_by_xpath("//*[text()[contains(., 'BNI Virtual Account')]]").click()
         time.sleep(20)
 
-    # @classmethod
-    # def teardown_class(self):
-    #     self.driver.quit()
+    @classmethod
+    def teardown_class(self):
+        self.driver.quit()
