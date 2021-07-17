@@ -41,8 +41,7 @@ class TestFlight:
         self.anak = random.randint(1,5)-1
 
     def randomize_cabin_class(self):
-        # self.cabin = random.randint(1,4) - 1
-        self.cabin = 0
+        self.cabin = random.randint(1,4) - 1
 
     def randomize_date_depature(self) :
         current_moth = datetime.today().month
@@ -227,7 +226,7 @@ class TestFlight:
         self.set_user_checkout_data()
         driver.find_element_by_class_name("v3-btn__blue").click()
         driver.find_element_by_xpath("//*[text()[contains(., 'BNI Virtual Account')]]").click()
-        time.sleep(20)
+        time.sleep(15)
 
     @classmethod
     def teardown_class(self):
